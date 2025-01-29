@@ -14,5 +14,7 @@
         public ApplicationUser User { get; set; } = null!;
         public Guid SuggestionId { get; set; }
         public Suggestion Suggestion { get; set; } = null!;
+        
+        public virtual ICollection<CommentRating> Ratings { get; set; } = new HashSet<CommentRating>();
     }
 }

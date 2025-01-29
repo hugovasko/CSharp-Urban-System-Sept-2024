@@ -160,5 +160,10 @@ namespace UrbanSystem.Data.Repository
                 return false;
             }
         }
+        
+        public async Task<int> CountAsync(Expression<Func<TType, bool>> predicate)
+        {
+            return await _dbSet.CountAsync(predicate);
+        }
     }
 }

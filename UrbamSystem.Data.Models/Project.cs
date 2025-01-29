@@ -21,5 +21,7 @@
 
         public Guid LocationId { get; set; }
         public Location Location { get; set; } = null!;
+        
+        public virtual ICollection<ProjectRating> Ratings { get; set; } = new HashSet<ProjectRating>();
     }
 }

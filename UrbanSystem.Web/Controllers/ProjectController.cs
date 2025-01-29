@@ -13,14 +13,17 @@ namespace UrbanSystem.Web.Controllers
     public class ProjectController : BaseController
     {
         private readonly IProjectService _projectService;
+        private readonly IRatingService _ratingService;
         private readonly ILogger<ProjectController> _logger;
 
         public ProjectController(
             IBaseService baseService,
             IProjectService projectService,
+            IRatingService ratingService,
             ILogger<ProjectController> logger) : base(baseService)
         {
             _projectService = projectService ?? throw new ArgumentNullException(nameof(projectService));
+            _ratingService = ratingService ?? throw new ArgumentNullException(nameof(ratingService));
             _baseService = baseService ?? throw new ArgumentNullException(nameof(baseService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -32,7 +35,16 @@ namespace UrbanSystem.Web.Controllers
             try
             {
                 var projects = await _projectService.GetAllProjectsAsync();
-                return View(projects);
+                var projectsWithRatings = projects.Select(p => new ProjectIndexViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    AverageRating = _ratingService.GetProjectAverageRatingAsync(p.Id).Result,
+                    TotalRatings = _ratingService.GetProjectTotalRatingsAsync(p.Id).Result // Ensure this method exists
+                }).ToList();
+
+                return View(projectsWithRatings);
+                // return View(projects);
             }
             catch (Exception ex)
             {
@@ -59,6 +71,9 @@ namespace UrbanSystem.Web.Controllers
                     _logger.LogWarning(ProjectNotFoundError!, id);
                     return NotFound(ProjectNotFoundError);
                 }
+
+                project.AverageRating = await _ratingService.GetProjectAverageRatingAsync(id);
+                project.TotalRatings = await _ratingService.GetProjectTotalRatingsAsync(id); // Ensure this exists
 
                 return View(project);
             }

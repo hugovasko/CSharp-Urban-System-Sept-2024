@@ -30,5 +30,9 @@ namespace UrbanSystem.Data.Repository.Contracts
         bool Update(TType type);
 
         Task<bool> UpdateAsync(TType type);
+        
+        Task<int> CountAsync(Expression<Func<TType, bool>> predicate);
+
+        
     }
 }

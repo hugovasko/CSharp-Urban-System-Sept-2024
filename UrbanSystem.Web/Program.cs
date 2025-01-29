@@ -112,6 +112,7 @@ namespace UrbanSystem.Web
             builder.Services.AddScoped<IProjectManagementService, ProjectManagementService>();
             builder.Services.AddScoped<IMeetingManagementService, MeetingManagementService>();
             builder.Services.AddScoped<ILocationManagementService, LocationManagementService>();
+            builder.Services.AddScoped<IRatingService, RatingService>();
         }
 
         private static void ConfigureIdentity(IdentityOptions options, WebApplicationBuilder builder)

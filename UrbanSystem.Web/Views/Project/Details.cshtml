@@ -1,6 +1,10 @@
 ﻿@model UrbanSystem.Web.ViewModels.Projects.ProjectIndexViewModel
 
 <div class="container my-5">
+    @{
+        var antiforgeryToken = @Html.AntiForgeryToken();
+    }
+    @antiforgeryToken
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg">
@@ -47,10 +51,36 @@
                     {
                         <p class="text-warning mt-4">Location coordinates are not available for this project.</p>
                     }
+
+                    <div class="rating-section mt-3">
+                        <h4>Project Rating</h4>
+                        <div class="current-rating mb-2">
+                            Average Rating: <span id="project-rating-@Model.Id">@Model.AverageRating.ToString("F1")</span>/5
+                            (<span id="total-ratings-@Model.Id">@Model.TotalRatings</span> ratings)
+                        </div>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="rate-project">
+                                <p>Rate this project:</p>
+                                <div class="btn-group" role="group" id="rating-buttons">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                onclick="rateProject('@Model.Id', @i)"
+                                                data-rating="@i">
+                                            @i
+                                        </button>
+                                    }
+                                </div>
+                                <div id="rating-feedback" class="mt-2"></div>
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 <div class="card-footer text-center">
-                    <input type="button" value="Cancel" onclick="location.href='/Project/All'" title="Click here to cancel and go back to main menu" />
+                    <input type="button" value="Cancel" onclick="location.href='/Project/All'" title="Click here to cancel and go back to main menu"/>
                 </div>
             </div>
         </div>
@@ -82,4 +112,5 @@
             });
         }
     </script>
+    <script src="~/js/ratings.js"></script>
 }
