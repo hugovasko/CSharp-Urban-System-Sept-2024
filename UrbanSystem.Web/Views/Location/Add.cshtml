@@ -1,0 +1,34 @@
+﻿@model UrbanSystem.Web.ViewModels.Locations.LocationFormViewModel;
+
+@{
+    ViewData["Title"] = "Add Location";
+}
+
+<h2>Add Location</h2>
+
+<form asp-action="Add" method="post">
+    <div class="form-group">
+        <label asp-for="CityName" class="control-label"></label>
+        <input asp-for="CityName" class="form-control" />
+        <span asp-validation-for="CityName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StreetName" class="control-label"></label>
+        <input asp-for="StreetName" class="form-control" />
+        <span asp-validation-for="StreetName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CityPicture" class="control-label"></label>
+        <input asp-for="CityPicture" class="form-control" />
+        <span asp-validation-for="CityPicture" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Location</button>
+    <a asp-action="All" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,41 @@
+﻿@model UrbanSystem.Web.ViewModels.Locations.LocationDetailsViewModel
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center">@Model.CityName - Urban System</h2>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <p class="fs-5"><strong>City:</strong> @Model.CityName</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="mb-3">Suggestions for this city:</h3>
+            @if (Model.Suggestions.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var suggestion in Model.Suggestions)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">@suggestion.Title</h5>
+                            </div>
+                            <a asp-controller="Suggestion" asp-action="Details" asp-route-id="@suggestion.Id" class="btn btn-primary btn-sm">View Details</a>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center" role="alert">
+                    No suggestions for this location just yet!
+                </div>
+            }
+        </div>
+    </div>
+</div>

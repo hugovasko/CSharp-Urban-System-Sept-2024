@@ -1,0 +1,24 @@
+﻿@model UrbanSystem.Web.ViewModels.Meetings.MeetingIndexViewModel
+
+<h2>Delete Meeting</h2>
+
+<p>Are you sure you want to delete the meeting below?</p>
+
+<div class="card">
+    <div class="card-header">
+        <strong>@Model.Title</strong>
+    </div>
+    <div class="card-body">
+        <p><strong>Description:</strong> @Model.Description</p>
+        <p><strong>Date:</strong> @Model.ScheduledDate.ToString("f")</p>
+        <p><strong>Duration:</strong> @Model.Duration hours</p>
+        <p><strong>Organizer:</strong> @Model.OrganizerName</p>
+        <p><strong>Location:</strong> @Model.CityName</p>
+    </div>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+</form>

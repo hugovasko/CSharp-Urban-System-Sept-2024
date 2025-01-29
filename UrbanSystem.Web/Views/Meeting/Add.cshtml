@@ -1,0 +1,104 @@
+﻿@model UrbanSystem.Web.ViewModels.Meetings.MeetingFormViewModel
+
+<form asp-action="Add" method="post">
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ScheduledDate"></label>
+        <input asp-for="ScheduledDate" type="datetime-local" class="form-control" />
+        <span asp-validation-for="ScheduledDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Duration"></label>
+        <input asp-for="Duration" class="form-control" />
+        <span asp-validation-for="Duration" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LocationId">Location</label>
+        <select asp-for="LocationId" class="form-control">
+            <option value="">Select a location</option>
+            @foreach (var city in Model.Cities.OrderBy(x => x.Text))
+            {
+                <option value="@city.Value">@city.Text</option>
+            }
+        </select>
+        <span asp-validation-for="LocationId" class="text-danger"></span>
+    </div>
+
+    <!-- Latitude and Longitude Fields -->
+    <div class="form-group">
+        <label asp-for="Latitude">Latitude</label>
+        <input asp-for="Latitude" id="latitude" class="form-control" readonly />
+        <span asp-validation-for="Latitude" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Longitude">Longitude</label>
+        <input asp-for="Longitude" id="longitude" class="form-control" readonly />
+        <span asp-validation-for="Longitude" class="text-danger"></span>
+    </div>
+
+    <!-- Google Map -->
+    <div class="form-group">
+        <label class="form-label fw-bold">Location on Map</label>
+        <div id="map" style="height: 400px;"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<!-- Google Maps Script -->
+<script>
+    let map, marker;
+
+    function initMap() {
+        // Default coordinates (if none are set, use a fallback location)
+        const defaultCoordinates = {
+            lat: @Model.Latitude != 0 ? @Model.Latitude : 42.016,
+            lng: @Model.Longitude != 0 ? @Model.Longitude : 23.094
+        };
+
+        // Initialize the map
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: defaultCoordinates,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.SATELLITE // Set the map type to satellite view
+        });
+
+        // Create a draggable marker
+        marker = new google.maps.Marker({
+            position: defaultCoordinates,
+            map: map,
+            draggable: true,
+        });
+
+        // Update the latitude and longitude input fields when the marker is moved
+        google.maps.event.addListener(marker, 'dragend', function (event) {
+            document.getElementById('latitude').value = event.latLng.lat();
+            document.getElementById('longitude').value = event.latLng.lng();
+        });
+
+        // Update marker position when the user clicks on the map
+        google.maps.event.addListener(map, 'click', function (event) {
+            const clickedLocation = event.latLng;
+            marker.setPosition(clickedLocation);
+            document.getElementById('latitude').value = clickedLocation.lat();
+            document.getElementById('longitude').value = clickedLocation.lng();
+        });
+    }
+</script>
+
+<!-- Load Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAef8QmS-s0zWe1_CE8a83MIHL_7XZyKoU&callback=initMap&v=weekly" async defer></script>

@@ -1,0 +1,129 @@
+﻿@model UrbanSystem.Web.ViewModels.Suggestions.SuggestionFormViewModel
+
+@{
+    ViewData["Title"] = "Add Suggestion";
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Add Suggestion</h1>
+
+    <form asp-action="Add" method="post" enctype="multipart/form-data" class="shadow-sm p-4 bg-light rounded">
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label fw-bold">Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Enter suggestion title" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label fw-bold">Category</label>
+            <select asp-for="Category" class="form-select">
+                <option value="">-- Select a Category --</option>
+                <option value="Infrastructure">Infrastructure</option>
+                <option value="Environment">Environment</option>
+                <option value="Public Safety">Public Safety</option>
+                <option value="Community Services">Community Services</option>
+                <option value="Other">Other</option>
+            </select>
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="AttachmentUrl" class="form-label fw-bold">Attachment URL</label>
+            <input asp-for="AttachmentUrl" class="form-control" type="url" placeholder="Enter image URL" />
+            <span asp-validation-for="AttachmentUrl" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label fw-bold">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Provide a detailed description"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CityId" class="form-label fw-bold">City</label>
+            <select asp-for="CityId" class="form-select">
+                <option value="">-- Select a City --</option>
+                @foreach (var city in Model.Cities.OrderBy(c => c.Text))
+                {
+                    <option value="@city.Value">@city.Text</option>
+                }
+            </select>
+            <span asp-validation-for="CityId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="StreetName" class="form-label fw-bold">Street Name</label>
+            <input asp-for="StreetName" class="form-control" placeholder="Enter the street name" />
+            <span asp-validation-for="StreetName" class="text-danger"></span>
+        </div>
+
+        <!-- Latitude Field -->
+        <div class="mb-3">
+            <label asp-for="Latitude" class="form-label fw-bold">Latitude</label>
+            <input asp-for="Latitude" id="latitude" class="form-control" readonly />
+            <span asp-validation-for="Latitude" class="text-danger"></span>
+        </div>
+
+        <!-- Longitude Field -->
+        <div class="mb-3">
+            <label asp-for="Longitude" class="form-label fw-bold">Longitude</label>
+            <input asp-for="Longitude" id="longitude" class="form-control" readonly />
+            <span asp-validation-for="Longitude" class="text-danger"></span>
+        </div>
+
+        <!-- Google Map -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Location</label>
+            <div id="map" style="height: 400px;"></div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="button" value="Cancel" onclick="location.href='/Suggestion/All'" title="Click here to cancel and go back to main menu" class="btn btn-secondary" />
+        </div>
+    </form>
+</div>
+
+<!-- Google Maps Script -->
+<script>
+    let map, marker;
+
+    function initMap() {
+        // Default coordinates (if none are set, use a fallback location)
+        const defaultCoordinates = {
+            lat: @Model.Latitude != 0 ? @Model.Latitude : 42.6977,
+            lng: @Model.Longitude != 0 ? @Model.Longitude : 23.3219
+        };
+
+        // Initialize the map
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: defaultCoordinates,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.SATELLITE // Set the map type to satellite view
+        });
+
+        // Create a draggable marker
+        marker = new google.maps.Marker({
+            position: defaultCoordinates,
+            map: map,
+            draggable: true,
+        });
+
+        // Update the latitude and longitude input fields when the marker is moved
+        google.maps.event.addListener(marker, 'dragend', function (event) {
+            document.getElementById('latitude').value = event.latLng.lat();
+            document.getElementById('longitude').value = event.latLng.lng();
+        });
+
+        // Update marker position when the user clicks on the map
+        google.maps.event.addListener(map, 'click', function (event) {
+            const clickedLocation = event.latLng;
+            marker.setPosition(clickedLocation);
+            document.getElementById('latitude').value = clickedLocation.lat();
+            document.getElementById('longitude').value = clickedLocation.lng();
+        });
+    }
+</script>
+
+<!-- Load Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAef8QmS-s0zWe1_CE8a83MIHL_7XZyKoU&callback=initMap&v=weekly" async defer></script>

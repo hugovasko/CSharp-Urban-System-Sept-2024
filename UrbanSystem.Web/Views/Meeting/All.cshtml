@@ -1,0 +1,34 @@
+﻿@model IEnumerable<UrbanSystem.Web.ViewModels.Meetings.MeetingIndexViewModel>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center mb-0">All Meetings</h1>
+        <a href="@Url.Action("Add", "Meeting")" class="btn btn-primary">Add New Meeting</a>
+    </div>
+
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Duration (Hours)</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var meeting in Model)
+            {
+                <tr>
+                    <td>@meeting.Title</td>
+                    <td>@meeting.ScheduledDate.ToString("g")</td>
+                    <td>@meeting.Duration</td>
+                    <td>@meeting.CityName</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Meeting", new { id = meeting.Id })" class="btn btn-info btn-sm me-2">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

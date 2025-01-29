@@ -1,0 +1,74 @@
+﻿@model IEnumerable<UrbanSystem.Web.ViewModels.Suggestions.SuggestionIndexViewModel>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Suggestion Management</h1>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var suggestion in Model)
+            {
+                <tr>
+                    <td>@suggestion.Title</td>
+                    <td>@suggestion.Category</td>
+                    <td>
+                        @{
+                            var statusClass = suggestion.Status.ToLower() == "open" ? "success" : "secondary";
+                        }
+                        <span class="badge bg-@statusClass">
+                            @suggestion.Status
+                        </span>
+                    </td>
+                    <td>
+                        @{
+                            var priorityClass = suggestion.Priority.ToLower() switch
+                            {
+                                "high" => "danger",
+                                "medium" => "warning",
+                                _ => "info"
+                            };
+                        }
+                        <span class="badge bg-@priorityClass">
+                            @suggestion.Priority
+                        </span>
+                    </td>
+                    <td>
+                        <form method="post" asp-action="Delete" asp-controller="SuggestionManagement" asp-area="Admin" class="d-inline">
+                            <input type="hidden" name="id" value="@suggestion.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this suggestion?');">Delete</button>
+                        </form>
+
+                        <form method="post" asp-action="UpdateStatus" asp-controller="SuggestionManagement" asp-area="Admin" class="d-inline mt-2">
+                            <input type="hidden" name="id" value="@suggestion.Id" />
+                            <select name="status" class="form-select d-inline w-auto">
+                                <option value="Open">Open</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                            <button type="submit" class="btn btn-secondary btn-sm">Update Status</button>
+                        </form>
+
+                        <form method="post" asp-action="UpdatePriority" asp-controller="SuggestionManagement" asp-area="Admin" class="d-inline mt-2">
+                            <input type="hidden" name="id" value="@suggestion.Id" />
+                            <select name="priority" class="form-select d-inline w-auto">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                            <button type="submit" class="btn btn-warning btn-sm">Update Priority</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

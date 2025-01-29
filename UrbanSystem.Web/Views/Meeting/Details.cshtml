@@ -1,0 +1,111 @@
+﻿@model UrbanSystem.Web.ViewModels.Meetings.MeetingIndexViewModel
+
+<h1>Meeting Details</h1>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text">@Model.Description</p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Date:</strong> @Model.ScheduledDate.ToString("g")</li>
+            <li class="list-group-item"><strong>Duration:</strong> @Model.Duration hours</li>
+            <li class="list-group-item"><strong>Location:</strong> @Model.CityName</li>
+            <li class="list-group-item"><strong>Organizer:</strong> @Model.OrganizerName</li>
+        </ul>
+    </div>
+</div>
+
+<div class="mt-3">
+    <h4>Attendees</h4>
+    @if (Model.Attendees != null && Model.Attendees.Any())
+    {
+        <ul class="list-group">
+            @foreach (var attendee in Model.Attendees)
+            {
+                <li class="list-group-item">@attendee</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No attendees yet.</p>
+    }
+</div>
+
+<div class="mt-3">
+    @if (User.Identity!.IsAuthenticated)
+    {
+        @if (Model.IsCurrentUserOrganizer)
+        {
+            <a href="@Url.Action("Edit", "Meeting", new { id = Model.Id })" class="btn btn-warning">Edit Meeting</a>
+            <a href="@Url.Action("Delete", "Meeting", new { id = Model.Id })" class="btn btn-danger">Delete Meeting</a>
+        }
+        else
+        {
+            @if (!Model.IsCurrentUserAttending) // If user is not attending, show "Attend Meeting" button
+            {
+                <form asp-action="Attend" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary">Attend Meeting</button>
+                </form>
+            }
+            @if (Model.IsCurrentUserAttending) // If user is attending, show "Cancel Attendance" button
+            {
+                <form asp-action="CancelAttendance" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Cancel Attendance</button>
+                </form>
+            }
+        }
+    }
+    else
+    {
+        <p>Please <a asp-area="Identity" asp-page="/Account/Login">log in</a> to attend or cancel attendance.</p>
+    }
+</div>
+
+<div class="mt-3">
+    <a href="@Url.Action("All", "Meeting")" class="btn btn-secondary">Back to List</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div id="map" style="height: 400px; width: 100%;"></div>
+
+@section Scripts {
+    <script async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAef8QmS-s0zWe1_CE8a83MIHL_7XZyKoU&callback=initMap&v=weekly">
+    </script>
+    <script>
+        function initMap() {
+            const projectLocation = {
+                lat: @Model.Latitude,
+                lng: @Model.Longitude
+            };
+
+            // Initialize the map
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: projectLocation,
+            });
+
+            // Add a marker
+            new google.maps.Marker({
+                position: projectLocation,
+                map: map,
+                title: "@Model.Title",
+            });
+        }
+    </script>
+}

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<UrbanSystem.Web.ViewModels.Suggestions.MySuggestionsViewModel>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center mb-0">My Suggestions</h1>
+        <a href="@Url.Action("Add", "Suggestion")" class="btn btn-success">Add Suggestion</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center text-muted">No suggestions found.</p>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var suggestion in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(suggestion.AttachmentUrl))
+                        {
+                            <img src="@suggestion.AttachmentUrl" class="card-img-top" alt="Image for @suggestion.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@suggestion.Title</h5>
+                            <p class="card-text">
+                                <strong>Uploaded On:</strong> @suggestion.UploadedOn
+                            </p>
+                            @if (suggestion.LocationNames.Any())
+                            {
+                                <p class="card-text">
+                                    <strong>Location:</strong> @suggestion.LocationNames.FirstOrDefault()?.Text
+                                </p>
+                            }
+                        </div>
+                        <div class="card-footer text-center">
+                            <a asp-action="Details" asp-controller="Suggestion" asp-route-id="@suggestion.Id" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

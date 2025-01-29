@@ -1,0 +1,14 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="text-center">
+    <h1 class="display-1">@ViewBag.ErrorCode</h1>
+    <h2 class="display-4">@ViewBag.ErrorMessage</h2>
+    @if (!string.IsNullOrEmpty(Model.RequestId))
+    {
+        <p>Request ID: @Model.RequestId</p>
+    }
+    <a href="/" class="btn btn-primary mt-3">Return to Home</a>
+</div>

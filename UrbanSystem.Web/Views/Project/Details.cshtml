@@ -1,0 +1,85 @@
+﻿@model UrbanSystem.Web.ViewModels.Projects.ProjectIndexViewModel
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="card-img-top" style="max-height: 400px; object-fit: cover;">
+                }
+                <div class="card-body">
+                    <h1 class="card-title text-primary">@Model.Name</h1>
+                    <p class="card-text">
+                        <strong>Description:</strong> @Model.Description
+                    </p>
+                    <div class="row mt-3">
+                        <div class="col-sm-6">
+                            <p>
+                                <strong>Funds Needed:</strong> @Model.DesiredSum.ToString("C")
+                            </p>
+                            <p>
+                                <strong>Created On:</strong> @Model.CreatedOn.ToString("dd/MM/yyyy")
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p>
+                                <strong>Status:</strong>
+                                <span class="badge @(Model.IsCompleted ? "bg-success" : "bg-warning")">
+                                    @(Model.IsCompleted ? "Completed" : "In Progress")
+                                </span>
+                            </p>
+                            @if (!string.IsNullOrEmpty(Model.LocationName))
+                            {
+                                <p>
+                                    <strong>Location:</strong> @Model.LocationName
+                                </p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Google Maps Section -->
+                    @if (Model.Latitude != 0 && Model.Longitude != 0)
+                    {
+                        <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+                    }
+                    else
+                    {
+                        <p class="text-warning mt-4">Location coordinates are not available for this project.</p>
+                    }
+                </div>
+
+                <div class="card-footer text-center">
+                    <input type="button" value="Cancel" onclick="location.href='/Project/All'" title="Click here to cancel and go back to main menu" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAef8QmS-s0zWe1_CE8a83MIHL_7XZyKoU&callback=initMap&v=weekly">
+    </script>
+    <script>
+        function initMap() {
+            const projectLocation = {
+                lat: @Model.Latitude,
+                lng: @Model.Longitude
+            };
+
+            // Initialize the map
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: projectLocation,
+            });
+
+            // Add a marker
+            new google.maps.Marker({
+                position: projectLocation,
+                map: map,
+                title: "@Model.Name",
+            });
+        }
+    </script>
+}

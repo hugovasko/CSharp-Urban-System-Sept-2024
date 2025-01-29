@@ -1,0 +1,44 @@
+﻿@model UrbanSystem.Web.ViewModels.Meetings.UserAttendedMeetingsViewModel
+
+<h1>My Attended Meetings</h1>
+
+@if (Model.AttendedMeetings.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Duration</th>
+                    <th>Location</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var meeting in Model.AttendedMeetings)
+                {
+                    <tr>
+                        <td>@meeting.Title</td>
+                        <td>@meeting.ScheduledDate.ToString("g")</td>
+                        <td>@meeting.Duration.ToString()</td>
+                        <td>@meeting.Location</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@meeting.Id" class="btn btn-primary btn-sm">Details</a>
+                            <form asp-action="CancelAttendance" asp-route-id="@meeting.Id" method="post" style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel Attendance</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>You are not attending any meetings at the moment.</p>
+}
+
+<a asp-action="All" class="btn btn-secondary">Back to All Meetings</a>

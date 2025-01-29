@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UrbamSystem.Data.Models\UrbanSystem.Data.Models.csproj" />
+    <ProjectReference Include="..\UrbanSystem.Data\UrbanSystem.Data.csproj" />
+    <ProjectReference Include="..\UrbanSystem.Web.Helpers\UrbanSystem.Web.Helpers.csproj" />
+    <ProjectReference Include="..\UrbanSystem.Web.ViewModels\UrbanSystem.Web.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,101 @@
+﻿@model UrbanSystem.Web.ViewModels.Suggestions.SuggestionIndexViewModel
+
+<div class="container my-5">
+    <!-- Suggestion Details -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="card-title">@Model.Title</h2>
+            <h5 class="card-subtitle mb-3 text-muted">Category: @Model.Category</h5>
+            <p class="card-text">@Model.Description</p>
+
+            @if (!string.IsNullOrEmpty(Model.AttachmentUrl))
+            {
+                <div class="mb-4">
+                    <p class="fw-bold">Attachment:</p>
+                    <img src="@Model.AttachmentUrl" alt="Attachment Image" class="img-fluid rounded shadow-sm" style="max-height: 350px; object-fit: cover;" />
+                </div>
+            }
+
+            <div class="mb-4">
+                <p><strong>Uploaded On:</strong> @Model.UploadedOn</p>
+                <p><strong>Status:</strong> @Model.Status</p>
+                <p><strong>Priority:</strong> @Model.Priority</p>
+                @if (Model.LocationNames.Any())
+                {
+                    <p><strong>Location:</strong> @Model.LocationNames.FirstOrDefault()</p>
+                }
+                <p><strong>Posted by:</strong> @Model.OrganizerName</p>
+            </div>
+
+            <!-- Google Map Section -->
+            <div class="mb-4">
+                <p class="fw-bold">Map Location:</p>
+                <div id="map" style="height: 400px;"></div>
+            </div>
+
+            <div class="mt-4">
+                @if (User.Identity.Name == Model.OrganizerName)
+                {
+                    <a asp-action="Edit" asp-controller="Suggestion" asp-route-id="@Model.Id" class="btn btn-primary me-2">Edit Suggestion</a>
+                    <a asp-action="ConfirmDelete" asp-controller="Suggestion" asp-route-id="@Model.Id" class="btn btn-danger">Delete Suggestion</a>
+                }
+            </div>
+
+            <a asp-action="All" asp-controller="Suggestion" class="btn btn-secondary mt-4">⬅️ Back to List</a>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">Comments</h3>
+
+            <!-- Add Comment Form -->
+            <form asp-action="AddComment" asp-controller="Suggestion" method="post" class="mb-4">
+                <input type="hidden" name="suggestionId" value="@Model.Id" />
+                <div class="mb-3">
+                    <textarea name="content" class="form-control" rows="3" placeholder="Add a comment..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+
+            <!-- Comments List -->
+            <div id="commentsList">
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@comment.UserName</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@comment.AddedOn.ToString("g")</h6>
+                            <p class="card-text">@comment.Content</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Google Maps Script -->
+<script>
+    function initMap() {
+        const coordinates = {
+            lat: @Model.Latitude != 0 ? @Model.Latitude : 42.6977,
+            lng: @Model.Longitude != 0 ? @Model.Longitude : 23.3219
+        };
+
+        const map = new google.maps.Map(document.getElementById("map"), {
+            center: coordinates,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.SATELLITE // Set the map type to satellite view
+        });
+
+        new google.maps.Marker({
+            position: coordinates,
+            map: map,
+        });
+    }
+</script>
+
+<!-- Load Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAef8QmS-s0zWe1_CE8a83MIHL_7XZyKoU&callback=initMap&v=weekly" async defer></script>
